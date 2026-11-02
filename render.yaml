@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: iot-smart-charging-station-api
+    runtime: node
+    rootDir: dashboard
+    plan: free
+    buildCommand: npm install --omit=dev
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: THINGSPEAK_TELEMETRY_CHANNEL_ID
+        sync: false
+      - key: THINGSPEAK_TELEMETRY_READ_API_KEY
+        sync: false
+      - key: THINGSPEAK_CONTROL_CHANNEL_ID
+        sync: false
+      - key: THINGSPEAK_CONTROL_READ_API_KEY
+        sync: false
+      - key: THINGSPEAK_CONTROL_WRITE_API_KEY
+        sync: false
+      - key: DASHBOARD_PASSWORD
+        sync: false
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_SERVICE_ACCOUNT_JSON
+        sync: false
+      - key: PUBLIC_APP_ORIGINS
+        sync: false

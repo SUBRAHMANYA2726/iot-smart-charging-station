@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f2f0eb">
+  <meta name="description" content="Privacy information for the ChargeSense ESP32 station dashboard.">
+  <title>Privacy | ChargeSense</title>
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="legal-body">
+  <main class="legal-page">
+    <a class="legal-brand" href="./">ChargeSense <span>Station 01</span></a>
+    <p class="eyebrow">PROJECT INFORMATION</p>
+    <h1>Privacy</h1>
+    <p class="legal-updated">Last updated: November 2, 2026</p>
+    <h2>What the station sends</h2>
+    <p>The ESP32 sends voltage, current, power, temperature, charging state, safety state, output state, Wi-Fi signal strength, and a station status message to the private ThingSpeak channel configured for this project. Start and stop requests are stored in a separate private ThingSpeak command channel.</p>
+    <h2>Where the information is processed</h2>
+    <p>ThingSpeak processes and stores channel entries under the account and plan used to create the channels. The Render server reads those channels, saves real telemetry history to the project's private Cloud Firestore database, and sends output requests to the separate command channel. ThingSpeak keys and Firebase service credentials stay in the server's private environment configuration. They are not sent to the browser or included in the source repository.</p>
+    <h2>Dashboard sign-in</h2>
+    <p>The dashboard uses a password that you configure. After sign-in, the server sets a secure, HTTP-only session cookie. Session records are kept in server memory and expire after 12 hours. They are removed when the server restarts. The password itself is not stored by the dashboard.</p>
+    <h2>Browser storage and analytics</h2>
+    <p>The installable web app caches its static interface so it can open without a network connection. Live readings and controls require a working connection. This project does not include third-party analytics, advertising trackers, customer counters, or review widgets.</p>
+    <h2>Retention and access</h2>
+    <p>ThingSpeak channel retention, account access, and deletion are managed in ThingSpeak. The Firestore collection <code>stations/station-01/telemetry</code> keeps the sensor history used by the graph. Anyone with access to the dashboard password can view station readings and request output changes, so keep the password private.</p>
+    <h2>Contact</h2>
+    <p>This is a personal project dashboard. No support email or business contact has been configured.</p>
+    <p class="legal-back"><a href="./">Back to station</a><a href="./terms.html">Terms</a></p>
+  </main>
+</body>
+</html>

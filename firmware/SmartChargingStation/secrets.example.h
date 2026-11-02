@@ -1,0 +1,11 @@
+#pragma once
+
+// Copy this file to secrets.h and replace each placeholder in your private copy.
+// Do not commit secrets.h or share ThingSpeak API keys.
+#define THINGSPEAK_TELEMETRY_CHANNEL_ID "REPLACE_WITH_TELEMETRY_CHANNEL_ID"
+#define THINGSPEAK_TELEMETRY_WRITE_API_KEY "REPLACE_WITH_TELEMETRY_WRITE_KEY"
+#define THINGSPEAK_CONTROL_CHANNEL_ID "REPLACE_WITH_COMMAND_CHANNEL_ID"
+#define THINGSPEAK_CONTROL_READ_API_KEY "REPLACE_WITH_COMMAND_READ_KEY"
+
+#define WIFI_SSID     "YOUR_WIFI_NAME"
+#define WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
