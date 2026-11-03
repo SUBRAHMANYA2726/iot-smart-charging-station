@@ -1,11 +1,11 @@
 #pragma once
 
-// Copy this file to secrets.h and replace each placeholder in your private copy.
-// Do not commit secrets.h or share ThingSpeak API keys.
-#define THINGSPEAK_TELEMETRY_CHANNEL_ID "REPLACE_WITH_TELEMETRY_CHANNEL_ID"
-#define THINGSPEAK_TELEMETRY_WRITE_API_KEY "REPLACE_WITH_TELEMETRY_WRITE_KEY"
-#define THINGSPEAK_CONTROL_CHANNEL_ID "REPLACE_WITH_COMMAND_CHANNEL_ID"
-#define THINGSPEAK_CONTROL_READ_API_KEY "REPLACE_WITH_COMMAND_READ_KEY"
+// Copy this file to secrets.h, replace each placeholder, and keep secrets.h out of Git.
+#define WIFI_SSID "replace-with-your-wifi-name"
+#define WIFI_PASSWORD "replace-with-your-wifi-password"
 
-#define WIFI_SSID     "YOUR_WIFI_NAME"
-#define WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
+// ChargeSense private ThingSpeak channels created for this station.
+#define THINGSPEAK_TELEMETRY_CHANNEL_ID "3564452"
+#define THINGSPEAK_TELEMETRY_WRITE_API_KEY "replace-with-telemetry-write-key"
+#define THINGSPEAK_CONTROL_CHANNEL_ID "3564453"
+#define THINGSPEAK_CONTROL_READ_API_KEY "replace-with-command-read-key"

@@ -1,0 +1,13 @@
+rules_version = '2';
+
+// Prototype rules for server-only Firestore access. The Render API uses the
+// Firebase Admin SDK, which authenticates with its own service identity and
+// bypasses client security rules. No browser or unauthenticated client access
+// is permitted.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

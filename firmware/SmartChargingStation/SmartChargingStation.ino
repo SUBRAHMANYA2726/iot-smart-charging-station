@@ -1,3 +1,6 @@
+#if !__has_include("secrets.h")
+  #error "Missing secrets.h. Copy secrets.example.h and enter your Wi-Fi and ThingSpeak keys."
+#endif
 #include "secrets.h"
 #include <Adafruit_INA219.h>
 #include <OneWire.h>

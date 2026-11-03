@@ -1,5 +1,6 @@
 # Private credentials
 firmware/SmartChargingStation/secrets.h
+firmware/SmartChargingStation/debug.log
 dashboard/.env
 
 # Arduino/PlatformIO/editor output
