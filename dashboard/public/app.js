@@ -5,6 +5,7 @@ const appState = {
   chartMetric: 'temperature',
   polling: false,
   installPrompt: null,
+  installTrigger: null,
   toastTimer: null,
   lastCommand: null,
   commandAt: 0,
@@ -445,15 +446,55 @@ window.addEventListener('beforeinstallprompt', (event) => {
   appState.installPrompt = event;
   $('installButton').hidden = false;
 });
-$('installButton').addEventListener('click', async () => {
-  if (!appState.installPrompt) {
-    showToast('In Android Chrome, open the menu and choose Install app.');
+function closeMenu() {
+  $('sidebar').classList.remove('menu-open');
+  $('menuButton').setAttribute('aria-expanded', 'false');
+  $('menuButton').setAttribute('aria-label', 'Open navigation menu');
+}
+function openInstallHelp(trigger) {
+  appState.installTrigger = trigger;
+  closeMenu();
+  $('installHelp').hidden = false;
+  $('closeInstallHelp').focus();
+}
+function closeInstallHelp() {
+  $('installHelp').hidden = true;
+  (appState.installTrigger || $('menuInstallButton')).focus();
+  appState.installTrigger = null;
+}
+async function startInstallFlow(event) {
+  const installPrompt = appState.installPrompt;
+  if (!installPrompt) {
+    openInstallHelp(event.currentTarget);
     return;
   }
-  appState.installPrompt.prompt();
-  await appState.installPrompt.userChoice;
   appState.installPrompt = null;
+  installPrompt.prompt();
+  const choice = await installPrompt.userChoice;
   $('installButton').hidden = true;
+  showToast(choice.outcome === 'accepted'
+    ? 'ChargeSense is installing on this device.'
+    : 'You can install ChargeSense later from your browser menu.');
+}
+$('menuButton').addEventListener('click', () => {
+  const open = $('sidebar').classList.toggle('menu-open');
+  $('menuButton').setAttribute('aria-expanded', String(open));
+  $('menuButton').setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+});
+$('sidebarNav').querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
+$('menuInstallButton').addEventListener('click', startInstallFlow);
+$('installButton').addEventListener('click', startInstallFlow);
+$('closeInstallHelp').addEventListener('click', closeInstallHelp);
+$('installHelpDone').addEventListener('click', closeInstallHelp);
+document.querySelector('[data-close-install]').addEventListener('click', closeInstallHelp);
+document.addEventListener('click', (event) => {
+  if (!$('sidebar').contains(event.target)) closeMenu();
+});
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+    closeMenu();
+    if (!$('installHelp').hidden) closeInstallHelp();
+  }
 });
 if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
   window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));

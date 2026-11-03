@@ -13,7 +13,7 @@
 </head>
 <body>
   <div class="app-shell">
-    <aside class="sidebar" aria-label="ChargeSense navigation">
+    <aside class="sidebar" id="sidebar" aria-label="ChargeSense navigation">
       <a class="brand" href="#overview" aria-label="ChargeSense home">
         <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 32 32"><path d="M18.2 3.8 8.5 17h7.2l-1.5 11.2L24 14.7h-7.1l1.3-10.9Z"/></svg>
@@ -21,8 +21,12 @@
         <span class="brand-name">charge<span>sense</span></span>
       </a>
 
+      <button id="menuButton" class="menu-button" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="sidebarNav">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg>
+      </button>
+
       <div class="sidebar-section-label">YOUR STATION</div>
-      <nav class="sidebar-nav">
+      <nav class="sidebar-nav" id="sidebarNav" aria-label="Station menu">
         <a class="nav-item active" href="#overview" aria-current="page">
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>
           <span>Overview</span>
@@ -35,6 +39,10 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 20 6v5c0 5-3.4 8.5-8 10-4.6-1.5-8-5-8-10V6l8-3Z"/><path d="m9 12 2 2 4-4"/></svg>
           <span>Safety log</span>
         </a>
+        <button id="menuInstallButton" class="menu-install-button" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 17v3h14v-3"/></svg>
+          <span>Install ChargeSense app</span>
+        </button>
       </nav>
 
       <div class="sidebar-device">
@@ -256,6 +264,21 @@
         <button type="submit">Continue <span aria-hidden="true">→</span></button>
         <p id="authError" class="auth-error" role="alert"></p>
       </form>
+    </section>
+  </div>
+  <div id="installHelp" class="install-help" hidden>
+    <button class="install-help-backdrop" type="button" aria-label="Close install help" data-close-install></button>
+    <section class="install-help-card" role="dialog" aria-modal="true" aria-labelledby="installHelpTitle" aria-describedby="installHelpDescription">
+      <button id="closeInstallHelp" class="install-help-close" type="button" aria-label="Close">×</button>
+      <span class="auth-eyebrow">CHARGESENSE · APP</span>
+      <h2 id="installHelpTitle">Install ChargeSense</h2>
+      <p id="installHelpDescription">ChargeSense installs from this secure website. It is a web app, not an APK download.</p>
+      <ol class="install-steps">
+        <li><strong>Android · Chrome or Edge</strong><span>Open the browser’s three-dot menu, then choose <b>Install app</b> or <b>Add to Home screen</b>.</span></li>
+        <li><strong>iPhone or iPad · Safari</strong><span>Tap <b>Share</b>, then <b>Add to Home Screen</b>.</span></li>
+        <li><strong>Desktop · Chrome or Edge</strong><span>Choose the install icon in the address bar, or select <b>Install ChargeSense</b> from the browser menu.</span></li>
+      </ol>
+      <button id="installHelpDone" class="install-help-done" type="button">Done</button>
     </section>
   </div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>

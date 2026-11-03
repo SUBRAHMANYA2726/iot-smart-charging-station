@@ -82,6 +82,21 @@ svg { display: block; fill: none; stroke: currentColor; stroke-linecap: round; s
 .nav-item:active { transform: scale(.975); }
 .nav-item.active { color: #fffdf9; background: #393732; }
 .nav-item.active svg { color: #e1a180; }
+.menu-button {
+  display: none;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 11px;
+  color: #f5f2eb;
+  background: #302e29;
+  cursor: pointer;
+}
+.menu-button svg { width: 19px; height: 19px; }
+.menu-button:focus-visible, .menu-install-button:focus-visible, .install-help-close:focus-visible, .install-help-done:focus-visible { outline: 3px solid rgba(169,89,62,.45); outline-offset: 2px; }
+.menu-install-button { display: none; }
 .sidebar-device {
   display: flex;
   align-items: center;
@@ -405,6 +420,18 @@ h1 { margin: 11px 0 6px; font-size: clamp(30px, 3.2vw, 42px); line-height: 1.1; 
 .auth-card form button { display: flex; align-items: center; justify-content: space-between; min-height: 45px; margin-top: 5px; padding: 0 15px; border: 0; border-radius: 10px; color: white; background: var(--accent); font-size: 11px; font-weight: 640; cursor: pointer; transition: transform .22s cubic-bezier(.22, 1, .36, 1), background-color .18s ease; }
 .auth-card form button:hover { background: var(--accent-dark); }
 .auth-card form button:active { transform: scale(.97); }
+.install-help { position: fixed; z-index: 25; inset: 0; display: grid; place-items: center; padding: 20px; }
+.install-help-backdrop { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: rgba(24,22,19,.55); cursor: default; }
+.install-help-card { position: relative; width: min(100%, 430px); max-height: calc(100dvh - 40px); overflow: auto; padding: 27px; border: 1px solid rgba(255,255,255,.65); border-radius: 20px; background: var(--paper); box-shadow: 0 28px 90px rgba(20,18,15,.28); }
+.install-help-close { position: absolute; top: 14px; right: 14px; display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink-soft); background: var(--paper-soft); font-size: 22px; line-height: 1; cursor: pointer; }
+.install-help-card h2 { margin: 8px 38px 6px 0; font-size: 22px; font-weight: 640; letter-spacing: -.6px; }
+.install-help-card > p { margin: 0; color: #77736b; font-size: 12px; line-height: 1.55; }
+.install-steps { display: grid; gap: 11px; margin: 19px 0; padding: 0; list-style: none; counter-reset: install; }
+.install-steps li { display: grid; gap: 4px; padding: 12px 13px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper-soft); counter-increment: install; }
+.install-steps li strong { color: var(--ink); font-size: 11px; }
+.install-steps li span { color: #77736b; font-size: 11px; line-height: 1.5; }
+.install-help-done { width: 100%; min-height: 44px; border: 0; border-radius: 11px; color: #fffdfa; background: var(--accent); font-size: 12px; font-weight: 650; cursor: pointer; }
+.install-help-done:hover { background: var(--accent-dark); }
 .auth-error { min-height: 14px; margin: 0; color: var(--red); font-size: 10px; }
 .toast { position: fixed; z-index: 30; right: 22px; bottom: calc(22px + env(safe-area-inset-bottom)); max-width: min(420px, calc(100vw - 44px)); padding: 12px 16px; border: 1px solid #5b574f; border-radius: 11px; color: #f7f4ee; background: #2f2d28; box-shadow: 0 8px 30px rgba(30,26,20,.22); font-size: 11px; opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity .2s ease, transform .2s ease; }
 .toast.show { opacity: 1; transform: translateY(0); }
@@ -420,14 +447,19 @@ h1 { margin: 11px 0 6px; font-size: clamp(30px, 3.2vw, 42px); line-height: 1.1; 
   .metric-item { padding-inline: 13px; }
 }
 @media (max-width: 820px) {
-  .sidebar { position: sticky; inset: 0 0 auto; width: 100%; height: auto; min-height: 62px; flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 16px; }
+  .sidebar { position: sticky; inset: 0 0 auto; z-index: 6; width: 100%; height: auto; min-height: 62px; flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 16px; }
   .brand { flex: 0 0 auto; padding: 0; gap: 8px; }
   .brand-mark { width: 30px; height: 30px; border-radius: 9px; }
   .brand-name { font-size: 15px; }
   .sidebar-section-label, .sidebar-device, .sidebar-bottom { display: none; }
-  .sidebar-nav { display: flex; gap: 3px; overflow: auto; }
-  .nav-item { min-height: 38px; gap: 7px; padding: 0 10px; border-radius: 9px; font-size: 10px; white-space: nowrap; }
-  .nav-item svg { width: 15px; height: 15px; }
+  .menu-button { display: grid; }
+  .sidebar-nav { position: absolute; top: 100%; right: 0; left: 0; display: none; gap: 5px; padding: 9px 12px 13px; border-top: 1px solid rgba(255,255,255,.1); background: var(--sidebar); box-shadow: 0 16px 28px rgba(25,23,20,.18); }
+  .sidebar.menu-open .sidebar-nav { display: grid; }
+  .nav-item { min-height: 43px; gap: 11px; padding: 0 12px; border-radius: 9px; font-size: 12px; }
+  .nav-item span { display: inline; }
+  .nav-item svg { width: 18px; height: 18px; }
+  .menu-install-button { display: flex; align-items: center; gap: 11px; min-height: 44px; margin-top: 5px; padding: 0 12px; border: 1px solid rgba(255,255,255,.2); border-radius: 10px; color: #fffdfa; background: #35332e; font-size: 12px; font-weight: 620; text-align: left; cursor: pointer; }
+  .menu-install-button svg { width: 18px; height: 18px; }
   .main-shell { margin-left: 0; }
   .topbar { min-height: 56px; padding-inline: 18px; }
   .content { padding: 27px 18px calc(22px + env(safe-area-inset-bottom)); }
@@ -448,9 +480,8 @@ h1 { margin: 11px 0 6px; font-size: clamp(30px, 3.2vw, 42px); line-height: 1.1; 
 @media (max-width: 620px) {
   .sidebar { min-height: 58px; padding: 8px 12px; }
   .brand-name { display: none; }
-  .nav-item { min-height: 37px; padding-inline: 9px; }
-  .nav-item span { display: none; }
-  .nav-item svg { width: 18px; height: 18px; }
+  .nav-item { min-height: 43px; padding-inline: 11px; }
+  .sidebar-nav .nav-item span { display: inline; }
   .topbar { min-height: 52px; padding-inline: 14px; }
   .breadcrumb { gap: 7px; font-size: 8px; }
   .breadcrumb strong { font-size: 8px; }
