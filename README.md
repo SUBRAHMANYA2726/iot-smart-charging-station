@@ -23,10 +23,10 @@ using a server-configured average effective load resistance. Configure
 `ESTIMATED_LOAD_RESISTANCE_AVG_OHMS` and, when available, calibrated
 `ESTIMATED_LOAD_RESISTANCE_MIN_OHMS` / `ESTIMATED_LOAD_RESISTANCE_MAX_OHMS`
 environment settings after experimental charging measurements. Until a valid
-average is set, estimates are unavailable and the dashboard says resistance
-needs configuration. Estimates are labeled, are not direct sensor readings,
-and are never used by safety interlocks or charging protection. The raw
-ThingSpeak and Firebase measurements remain unchanged. See
+average is set, estimates are unavailable and the dashboard says
+"Resistance configuration required". Estimates are labeled, not direct sensor
+readings, and are never used by safety interlocks or charging protection. The
+raw ThingSpeak and Firebase measurements remain unchanged. See
 `dashboard/README.md` for details.
 
 ## Set up the cloud and device

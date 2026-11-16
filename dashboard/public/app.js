@@ -33,7 +33,7 @@ function updateEstimationStatus(status) {
     ? 'Estimated using average load resistance. These estimates are not sensor readings or safety inputs.'
     : appState.estimationStatus === 'invalid'
       ? 'Resistance configuration is invalid; estimated current and power are unavailable.'
-      : 'Resistance needs configuration before current and power can be estimated.';
+      : 'Resistance configuration required';
   $('estimationStatus').dataset.state = appState.estimationStatus;
   setText('estimationStatus', message);
 }
@@ -347,7 +347,7 @@ function drawChart() {
     const message = appState.estimationStatus === 'invalid'
       ? 'Resistance configuration is invalid; estimated history is unavailable.'
       : appState.estimationStatus === 'missing'
-        ? 'Resistance needs configuration to graph estimated current or power.'
+        ? 'Resistance configuration required'
         : 'Waiting for valid ThingSpeak readings.';
     setText('chartEmpty', estimating ? message : 'Waiting for ThingSpeak readings.');
   }
