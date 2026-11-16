@@ -3,6 +3,7 @@ const appState = {
   readings: [],
   latest: null,
   chartMetric: 'temperature',
+  estimationStatus: 'missing',
   polling: false,
   installPrompt: null,
   installTrigger: null,
@@ -14,8 +15,8 @@ const appState = {
 const metrics = {
   temperature: { key: 'temperature', label: 'Temperature', unit: '°C', digits: 1, color: '#a9593e', min: 20, max: 55 },
   voltage: { key: 'voltage', label: 'Voltage', unit: 'V', digits: 2, color: '#607b8d', min: 4.0, max: 5.8 },
-  current: { key: 'current', label: 'Current', unit: 'A', digits: 3, color: '#b27643', min: 0, max: 1.2 },
-  power: { key: 'power', label: 'Power', unit: 'W', digits: 2, color: '#8d7561', min: 0, max: 6 },
+  current: { key: 'estimatedCurrent', label: 'Estimated current', unit: 'A', digits: 3, color: '#b27643', min: 0, max: 1.2 },
+  power: { key: 'estimatedPower', label: 'Estimated power', unit: 'W', digits: 2, color: '#8d7561', min: 0, max: 6 },
 };
 const states = ['STARTING', 'NORMAL', 'WARNING', 'FAULT', 'SENSOR ERROR'];
 
@@ -26,6 +27,16 @@ function numeric(value) {
   return Number.isFinite(parsed) ? parsed : null;
 }
 function displayNumber(value, digits) { return typeof value === 'number' ? value.toFixed(digits) : '--'; }
+function updateEstimationStatus(status) {
+  appState.estimationStatus = ['configured', 'invalid', 'missing'].includes(status) ? status : 'missing';
+  const message = appState.estimationStatus === 'configured'
+    ? 'Estimated using average load resistance. These estimates are not sensor readings or safety inputs.'
+    : appState.estimationStatus === 'invalid'
+      ? 'Resistance configuration is invalid; estimated current and power are unavailable.'
+      : 'Resistance needs configuration before current and power can be estimated.';
+  $('estimationStatus').dataset.state = appState.estimationStatus;
+  setText('estimationStatus', message);
+}
 function showToast(message) {
   const toast = $('toast');
   toast.textContent = message;
@@ -108,6 +119,7 @@ function stateFor(data) {
 function applyStatus(data) {
   const previousTemperature = numeric(appState.latest?.values?.temperature);
   appState.latest = data;
+  updateEstimationStatus(data.estimationConfigurationStatus);
   const stationCard = document.querySelector('.station-card');
   stationCard.classList.remove('fault', 'warning', 'good');
   setText('storageStatus', !data.storageConfigured ? 'Setup required' : data.storageOnline ? 'Connected' : 'Unavailable');
@@ -140,8 +152,8 @@ function applyStatus(data) {
   appState.readings = Array.isArray(data.feeds) ? data.feeds.map((feed) => ({
     time: feed.time,
     voltage: numeric(feed.voltage),
-    current: numeric(feed.current),
-    power: numeric(feed.power),
+    estimatedCurrent: numeric(feed.estimatedCurrent),
+    estimatedPower: numeric(feed.estimatedPower),
     temperature: numeric(feed.temperature),
   })).filter((reading) => reading.time) : [];
 
@@ -169,8 +181,8 @@ function applyStatus(data) {
   if (status.stateClass) stationCard.classList.add(status.stateClass);
 
   const voltage = numeric(values.voltage);
-  const current = numeric(values.current);
-  const power = numeric(values.power);
+  const current = numeric(values.estimatedCurrent);
+  const power = numeric(values.estimatedPower);
   const temperature = numeric(values.temperature);
   setText('chargingValue', values.charging === null || values.charging === undefined ? '--' : values.charging ? 'Active' : 'Idle');
   setText('outputValue', values.outputEnabled === null || values.outputEnabled === undefined ? '--' : values.outputEnabled ? 'Enabled' : 'Stopped');
@@ -181,9 +193,10 @@ function applyStatus(data) {
   setText('voltageValue', displayNumber(voltage, 2));
   setText('currentValue', displayNumber(current, 3));
   setText('powerValue', displayNumber(power, 2));
-  $('voltageBar').style.width = percent(voltage, 4.0, 5.8) + '%';
-  $('currentBar').style.width = percent(Math.abs(current), 0, 1.2) + '%';
-  $('powerBar').style.width = percent(power, 0, 6) + '%';
+  const observedVoltageMax = Math.max(0, ...appState.readings.map((reading) => reading.voltage ?? 0));
+  $('voltageBar').style.width = percent(voltage, 0, observedVoltageMax || 1) + '%';
+  $('currentBar').style.width = percent(Math.abs(current), 0, Math.max(1.2, Math.abs(current || 0))) + '%';
+  $('powerBar').style.width = percent(power, 0, Math.max(6, power || 0)) + '%';
   setTemperature(temperature, previousTemperature);
   setText('lastAlert', data.alert || 'No alert reported by the ESP32.');
   $('alertIndicator').className = 'alert-indicator' + (status.stateClass === 'fault' ? ' fault' : status.stateClass === 'warning' ? ' warning' : '');
@@ -289,7 +302,13 @@ async function checkSession() {
     }
     hideLogin();
     if (!me.cloudConfigured) {
-      applyStatus({ configured: false, controlConfigured: false, feeds: [], values: {} });
+      applyStatus({
+        configured: false,
+        controlConfigured: false,
+        estimationConfigurationStatus: me.estimationConfigurationStatus,
+        feeds: [],
+        values: {},
+      });
       return;
     }
     appState.account = me;
@@ -323,6 +342,15 @@ function drawChart() {
     .map((reading) => ({ time: reading.time, value: numeric(reading[config.key]) }))
     .filter((point) => point.value !== null && !Number.isNaN(new Date(point.time).getTime()));
   $('chartEmpty').hidden = valid.length > 0;
+  if (!valid.length) {
+    const estimating = appState.chartMetric === 'current' || appState.chartMetric === 'power';
+    const message = appState.estimationStatus === 'invalid'
+      ? 'Resistance configuration is invalid; estimated history is unavailable.'
+      : appState.estimationStatus === 'missing'
+        ? 'Resistance needs configuration to graph estimated current or power.'
+        : 'Waiting for valid ThingSpeak readings.';
+    setText('chartEmpty', estimating ? message : 'Waiting for ThingSpeak readings.');
+  }
   setText('chartUnit', config.unit);
   setText('chartLatest', valid.length ? valid[valid.length - 1].value.toFixed(config.digits) : '--');
   setText('chartStart', valid.length ? formatAxisTime(valid[0].time) : '--');

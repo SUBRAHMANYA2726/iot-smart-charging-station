@@ -337,6 +337,8 @@ h1 { margin: 11px 0 6px; font-size: clamp(30px, 3.2vw, 42px); line-height: 1.1; 
 .control-panel.fault .control-state-label { color: var(--red); }
 
 .metrics-section .section-heading { margin-top: 28px; }
+.estimation-status { margin: 0 0 9px; color: #8c887f; font-size: 9px; }
+.estimation-status[data-state="invalid"] { color: #974c40; }
 .metrics-strip { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); overflow: hidden; border: 1px solid var(--line); border-radius: 15px; background: var(--paper); box-shadow: var(--shadow); }
 .metric-item { min-width: 0; padding: 16px 18px 14px; }
 .metric-item + .metric-item { border-left: 1px solid var(--line); }

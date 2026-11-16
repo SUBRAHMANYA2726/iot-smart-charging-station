@@ -18,12 +18,23 @@ ESP32 firmware and a responsive web dashboard for a supervised, low-voltage smar
 
 No sample or seeded sensor measurements are shown. Values remain blank until a real ESP32 sends them. The dashboard hides stale readings. The firmware keeps the output off at boot, rejects Start requests unless local checks pass, and disconnects the output if its cloud command link is lost.
 
+The dashboard derives estimated current and power from each ESP32 voltage sample
+using a server-configured average effective load resistance. Configure
+`ESTIMATED_LOAD_RESISTANCE_AVG_OHMS` and, when available, calibrated
+`ESTIMATED_LOAD_RESISTANCE_MIN_OHMS` / `ESTIMATED_LOAD_RESISTANCE_MAX_OHMS`
+environment settings after experimental charging measurements. Until a valid
+average is set, estimates are unavailable and the dashboard says resistance
+needs configuration. Estimates are labeled, are not direct sensor readings,
+and are never used by safety interlocks or charging protection. The raw
+ThingSpeak and Firebase measurements remain unchanged. See
+`dashboard/README.md` for details.
+
 ## Set up the cloud and device
 
 1. Follow [the ThingSpeak setup guide](docs/THINGSPEAK_SETUP.md) to create a private telemetry channel and a separate private command channel.
 2. Install the Arduino IDE and required board/library packages. Copy `firmware/SmartChargingStation/secrets.example.h` to `secrets.h` and add Wi-Fi plus channel keys.
 3. Follow [the build guide](docs/BUILD_GUIDE.md) and [wiring and safety guide](docs/WIRING_AND_SAFETY.md). Test only with a supervised, rated 5 V demo load.
-4. Deploy the Render API and set the private ThingSpeak channel IDs and API keys, Firebase server credentials, Vercel origin, and a unique dashboard password in Render's environment settings. Never place these secrets in Git.
+4. Deploy the Render API and set the private ThingSpeak channel IDs and API keys, Firebase server credentials, Vercel origin, and a unique dashboard password in Render's environment settings. After experimental calibration, add the effective load resistance minimum, average, and maximum settings there. Never place secrets or uncalibrated resistance values in Git.
 5. Deploy the website from this repository to Vercel. Open its HTTPS URL on Android and choose **Install app** or **Add to Home screen**. The website and installed app use the same Render backend; no local server is needed.
 
 ## Cloud fields
@@ -40,6 +51,10 @@ No sample or seeded sensor measurements are shown. Values remain blank until a r
 | 8 | Wi-Fi signal strength, dBm |
 
 ThingSpeak free accounts accept writes at 15-second intervals. Firmware publishes at that interval. The Render API reads current values from ThingSpeak, stores real samples in Firestore, and serves them to the Vercel website and Android PWA. API keys are never sent to the browser.
+
+Fields 1–8 remain the ESP32's raw telemetry. Estimated current and power are
+computed server-side for dashboard display and history; they are not written
+back as sensor measurements.
 
 ## Publish
 

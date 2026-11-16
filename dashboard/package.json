@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "scripts": { "start": "node server.mjs" },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test"
+  },
   "dependencies": { "firebase-admin": "^13.5.0" },
   "engines": { "node": ">=20" }
 }

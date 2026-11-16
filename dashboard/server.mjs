@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { applicationDefault, cert, initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
+import { estimateElectricalValues, loadResistanceConfiguration } from './estimation.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC = path.join(ROOT, 'public');
@@ -48,6 +49,7 @@ const CONTROL_READ_KEY = process.env.THINGSPEAK_CONTROL_READ_API_KEY || '';
 const CONTROL_WRITE_KEY = process.env.THINGSPEAK_CONTROL_WRITE_API_KEY || '';
 const COMMAND_INTERVAL_MS = Number(process.env.THINGSPEAK_COMMAND_INTERVAL_MS || 15000);
 const TELEMETRY_STALE_MS = Number(process.env.TELEMETRY_STALE_MS || 45000);
+const resistanceConfiguration = loadResistanceConfiguration(process.env);
 const telemetryConfigured = () => Boolean(TELEMETRY_CHANNEL_ID && TELEMETRY_READ_KEY);
 const controlConfigured = () => Boolean(CONTROL_CHANNEL_ID && CONTROL_READ_KEY && CONTROL_WRITE_KEY);
 const sessions = new Map();
@@ -161,6 +163,9 @@ function mapFeed(feed) {
     alert: typeof feed.status === 'string' ? feed.status : '',
   };
 }
+function withEstimatedValues(feed) {
+  return { ...feed, ...estimateElectricalValues(feed.voltage, resistanceConfiguration) };
+}
 function telemetryCollection() {
   return firebaseDb?.collection('stations').doc('station-01').collection('telemetry') || null;
 }
@@ -211,6 +216,7 @@ async function getStatus(force = false) {
   if (!telemetryConfigured()) {
     return {
       configured: false, controlConfigured: controlConfigured(), online: false,
+      estimationConfigurationStatus: resistanceConfiguration.status,
       values: {}, feeds: [], lastUpdatedAt: null, fetchedAt: new Date().toISOString(),
     };
   }
@@ -241,12 +247,14 @@ async function getStatus(force = false) {
     storageConfigured: Boolean(firebaseDb) && !firebaseConfigError,
     storageOnline,
     online,
+    estimationConfigurationStatus: resistanceConfiguration.status,
     values: latest ? {
       voltage: latest.voltage, current: latest.current, power: latest.power,
+      ...estimateElectricalValues(latest.voltage, resistanceConfiguration),
       temperature: latest.temperature, charging: latest.charging,
       state: latest.state, outputEnabled: latest.outputEnabled, rssi: latest.rssi,
     } : {},
-    feeds: historyFeeds,
+    feeds: historyFeeds.map(withEstimatedValues),
     alert: latest?.alert || '',
     lastUpdatedAt: latest?.time || null,
     fetchedAt: new Date().toISOString(),
@@ -271,8 +279,9 @@ async function offlineStatus() {
     storageConfigured: Boolean(firebaseDb) && !firebaseConfigError,
     storageOnline,
     online: false,
+    estimationConfigurationStatus: resistanceConfiguration.status,
     values: {},
-    feeds,
+    feeds: feeds.map(withEstimatedValues),
     alert: latest?.alert || '',
     lastUpdatedAt: latest?.time || null,
     fetchedAt: new Date().toISOString(),
@@ -350,6 +359,7 @@ const server = http.createServer(async (req, res) => {
         cloudConfigured: telemetryConfigured(),
         controlConfigured: controlConfigured(),
         storageConfigured: Boolean(firebaseDb) && !firebaseConfigError,
+        estimationConfigurationStatus: resistanceConfiguration.status,
       });
     }
     if (req.method === 'POST' && url.pathname === '/api/login') {

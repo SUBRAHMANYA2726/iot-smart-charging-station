@@ -11,8 +11,20 @@ Follow [the cloud guide](../docs/THINGSPEAK_SETUP.md) to create the private chan
 - Telemetry channel ID and Read API Key.
 - Command channel ID, Read API Key, and Write API Key.
 - A unique `DASHBOARD_PASSWORD`.
+- Calibrated effective load resistance values for estimated current and power
+  (`ESTIMATED_LOAD_RESISTANCE_MIN_OHMS`, `ESTIMATED_LOAD_RESISTANCE_AVG_OHMS`,
+  and `ESTIMATED_LOAD_RESISTANCE_MAX_OHMS`). Leave them unset until calibration
+  data is available. The average must be positive; optional minimum and maximum
+  values must bound it.
 
 Keep `.env` private. It is excluded from Git. The browser never receives ThingSpeak keys. The ESP32 needs its own private `secrets.h` with the telemetry Write API Key and command Read API Key.
+
+The server estimates current as measured voltage divided by the configured
+average resistance, then estimates power as voltage times estimated current.
+The resistance is stored only in server environment settings; the API returns
+estimates and configuration status, not resistance values. Current and power
+estimates are not sensor readings and must never be used for safety or charging
+protection. Calibrate using real charging measurements before configuring them.
 
 ## Run on Windows
 
@@ -28,6 +40,6 @@ Or double-click `Start-Dashboard.bat`. Open `http://localhost:3000`. Localhost i
 
 ## Deploy to Render
 
-The project root has a `render.yaml` Blueprint for this web service. Connect the repository that contains this project, then set the channel IDs, private API keys, and dashboard password as Render environment secrets. Keep the service at one instance because its login session records are held in memory. After deployment, check `/api/health`, sign in with the configured dashboard password, and open the secure address on Android to install.
+The project root has a `render.yaml` Blueprint for this web service. Connect the repository that contains this project, then set the channel IDs, private API keys, and dashboard password as Render environment secrets. After experimentally calibrating effective load resistance, add the minimum, average, and maximum resistance settings to the Render service environment; do not enter estimates before measurements are available. Keep the service at one instance because its login session records are held in memory. After deployment, check `/api/health`, sign in with the configured dashboard password, and open the secure address on Android to install.
 
 No ThingSpeak credentials are included in this source package. Until the channels and keys are configured, the dashboard reports setup status and does not invent readings.
