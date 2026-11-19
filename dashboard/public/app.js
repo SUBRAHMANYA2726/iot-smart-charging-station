@@ -15,8 +15,6 @@ const appState = {
 const metrics = {
   temperature: { key: 'temperature', label: 'Temperature', unit: '°C', digits: 1, color: '#a9593e', min: 20, max: 55 },
   voltage: { key: 'voltage', label: 'Voltage', unit: 'V', digits: 2, color: '#607b8d', min: 4.0, max: 5.8 },
-  current: { key: 'estimatedCurrent', label: 'Estimated current', unit: 'A', digits: 3, color: '#b27643', min: 0, max: 1.2 },
-  power: { key: 'estimatedPower', label: 'Estimated power', unit: 'W', digits: 2, color: '#8d7561', min: 0, max: 6 },
 };
 const states = ['STARTING', 'NORMAL', 'WARNING', 'FAULT', 'SENSOR ERROR'];
 
@@ -101,11 +99,7 @@ function clearLiveReadings() {
   setText('rssiValue', '--');
   setText('rssiCaption', 'Reported by ESP32');
   setText('voltageValue', '--');
-  setText('currentValue', '--');
-  setText('powerValue', '--');
   $('voltageBar').style.width = '0%';
-  $('currentBar').style.width = '0%';
-  $('powerBar').style.width = '0%';
   setTemperature(null);
 }
 function stateFor(data) {
@@ -152,8 +146,6 @@ function applyStatus(data) {
   appState.readings = Array.isArray(data.feeds) ? data.feeds.map((feed) => ({
     time: feed.time,
     voltage: numeric(feed.voltage),
-    estimatedCurrent: numeric(feed.estimatedCurrent),
-    estimatedPower: numeric(feed.estimatedPower),
     temperature: numeric(feed.temperature),
   })).filter((reading) => reading.time) : [];
 
@@ -181,8 +173,6 @@ function applyStatus(data) {
   if (status.stateClass) stationCard.classList.add(status.stateClass);
 
   const voltage = numeric(values.voltage);
-  const current = numeric(values.estimatedCurrent);
-  const power = numeric(values.estimatedPower);
   const temperature = numeric(values.temperature);
   setText('chargingValue', values.charging === null || values.charging === undefined ? '--' : values.charging ? 'Active' : 'Idle');
   setText('outputValue', values.outputEnabled === null || values.outputEnabled === undefined ? '--' : values.outputEnabled ? 'Enabled' : 'Stopped');
@@ -191,12 +181,8 @@ function applyStatus(data) {
   const rssi = numeric(values.rssi);
   setText('rssiCaption', rssi === null ? 'Signal reported by ESP32' : rssi > -60 ? 'Strong signal' : rssi > -75 ? 'Fair signal' : 'Weak signal');
   setText('voltageValue', displayNumber(voltage, 2));
-  setText('currentValue', displayNumber(current, 3));
-  setText('powerValue', displayNumber(power, 2));
   const observedVoltageMax = Math.max(0, ...appState.readings.map((reading) => reading.voltage ?? 0));
   $('voltageBar').style.width = percent(voltage, 0, observedVoltageMax || 1) + '%';
-  $('currentBar').style.width = percent(Math.abs(current), 0, Math.max(1.2, Math.abs(current || 0))) + '%';
-  $('powerBar').style.width = percent(power, 0, Math.max(6, power || 0)) + '%';
   setTemperature(temperature, previousTemperature);
   setText('lastAlert', data.alert || 'No alert reported by the ESP32.');
   $('alertIndicator').className = 'alert-indicator' + (status.stateClass === 'fault' ? ' fault' : status.stateClass === 'warning' ? ' warning' : '');
@@ -343,13 +329,7 @@ function drawChart() {
     .filter((point) => point.value !== null && !Number.isNaN(new Date(point.time).getTime()));
   $('chartEmpty').hidden = valid.length > 0;
   if (!valid.length) {
-    const estimating = appState.chartMetric === 'current' || appState.chartMetric === 'power';
-    const message = appState.estimationStatus === 'invalid'
-      ? 'Resistance configuration is invalid; estimated history is unavailable.'
-      : appState.estimationStatus === 'missing'
-        ? 'Resistance configuration required'
-        : 'Waiting for valid ThingSpeak readings.';
-    setText('chartEmpty', estimating ? message : 'Waiting for ThingSpeak readings.');
+    setText('chartEmpty', 'Waiting for ThingSpeak readings.');
   }
   setText('chartUnit', config.unit);
   setText('chartLatest', valid.length ? valid[valid.length - 1].value.toFixed(config.digits) : '--');

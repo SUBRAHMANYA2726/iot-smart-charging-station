@@ -223,10 +223,10 @@ h1 { margin: 11px 0 6px; font-size: clamp(30px, 3.2vw, 42px); line-height: 1.1; 
 .temperature-card {
   position: relative;
   display: flex;
-  min-height: 258px;
+  min-height: 340px;
   flex-direction: column;
   overflow: hidden;
-  padding: 23px 26px 20px;
+  padding: 28px 30px 24px;
   border-color: #e5ded2;
   background: #eee9df;
   transition: background-color .5s ease, border-color .45s ease, box-shadow .45s ease;
@@ -246,12 +246,12 @@ h1 { margin: 11px 0 6px; font-size: clamp(30px, 3.2vw, 42px); line-height: 1.1; 
 .card-kicker { color: #767065; }
 .live-pulse { display: inline-block; width: 6px; height: 6px; margin: 0 5px 1px 0; border-radius: 50%; background: #58775e; vertical-align: middle; }
 .temperature-state { padding: 6px 9px; border: 1px solid rgba(99,87,69,.14); border-radius: 99px; color: #676257; background: rgba(255,253,250,.43); font-size: 8px; font-weight: 750; letter-spacing: .75px; white-space: nowrap; }
-.temperature-main { position: relative; z-index: 1; display: flex; flex: 1; align-items: center; justify-content: space-between; gap: 14px; min-height: 130px; }
+.temperature-main { position: relative; z-index: 1; display: flex; flex: 1; align-items: center; justify-content: space-between; gap: 14px; min-height: 170px; }
 .temperature-reading { padding: 4px 0 0; }
-.temperature-number { display: flex; align-items: flex-start; color: #27251f; font-size: clamp(62px, 7vw, 90px); font-weight: 540; letter-spacing: -6px; line-height: .98; font-variant-numeric: tabular-nums; }
-.temperature-number small { margin: 9px 0 0 8px; color: #777166; font-size: 25px; font-weight: 470; letter-spacing: -.7px; }
+.temperature-number { display: flex; align-items: flex-start; color: #27251f; font-size: clamp(84px, 10vw, 130px); font-weight: 540; letter-spacing: -6px; line-height: .98; font-variant-numeric: tabular-nums; }
+.temperature-number small { margin: 9px 0 0 8px; color: #777166; font-size: 36px; font-weight: 470; letter-spacing: -.7px; }
 .temperature-reading p { margin: 12px 0 0 3px; color: #746f65; font-size: 12px; }
-.temperature-orbit { position: relative; display: grid; flex: 0 0 126px; place-items: center; width: 126px; height: 126px; margin-right: 7px; }
+.temperature-orbit { position: relative; display: grid; flex: 0 0 150px; place-items: center; width: 150px; height: 150px; margin-right: 7px; }
 .temperature-orbit > svg { width: 100%; height: 100%; transform: rotate(-90deg); }
 .thermal-track, .thermal-progress { fill: none; stroke-width: 4; }
 .thermal-track { stroke: #d9d1c4; }
@@ -339,23 +339,19 @@ h1 { margin: 11px 0 6px; font-size: clamp(30px, 3.2vw, 42px); line-height: 1.1; 
 .metrics-section .section-heading { margin-top: 28px; }
 .estimation-status { margin: 0 0 9px; color: #8c887f; font-size: 9px; }
 .estimation-status[data-state="invalid"] { color: #974c40; }
-.metrics-strip { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); overflow: hidden; border: 1px solid var(--line); border-radius: 15px; background: var(--paper); box-shadow: var(--shadow); }
+.metrics-strip { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); overflow: hidden; border: 1px solid var(--line); border-radius: 15px; background: var(--paper); box-shadow: var(--shadow); }
 .metric-item { min-width: 0; padding: 16px 18px 14px; }
 .metric-item + .metric-item { border-left: 1px solid var(--line); }
 .metric-topline { display: flex; align-items: center; gap: 7px; color: #89857c; font-size: 8px; font-weight: 740; letter-spacing: 1px; }
 .metric-dot { width: 6px; height: 6px; border-radius: 50%; }
 .voltage-dot { background: #607b8d; }
-.current-dot { background: #b27643; }
-.power-dot { background: #8d7561; }
 .load-dot { background: #6c8a70; }
 .metric-symbol { display: grid; place-items: center; width: 19px; height: 19px; margin-left: auto; border-radius: 6px; color: #7e796f; background: #f3f1ec; font-size: 9px; font-weight: 650; }
-.metric-reading { display: flex; align-items: baseline; gap: 5px; margin-top: 13px; color: #292821; font-size: clamp(25px, 3vw, 33px); font-weight: 560; letter-spacing: -1.35px; font-variant-numeric: tabular-nums; }
+.metric-reading { display: flex; align-items: baseline; gap: 5px; margin-top: 13px; color: #292821; font-size: clamp(36px, 5vw, 52px); font-weight: 560; letter-spacing: -1.35px; font-variant-numeric: tabular-nums; }
 .metric-reading small { color: #858177; font-size: 11px; font-weight: 480; letter-spacing: 0; }
 .metric-track { height: 3px; overflow: hidden; margin-top: 12px; border-radius: 5px; background: #eeece6; }
 .metric-track span { display: block; width: 0; height: 100%; border-radius: inherit; transition: width .5s cubic-bezier(.22, 1, .36, 1); }
 .voltage-fill { background: #607b8d; }
-.current-fill { background: #b27643; }
-.power-fill { background: #8d7561; }
 .metric-item p { overflow: hidden; margin: 8px 0 0; color: #99948a; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
 .metric-item .metric-footnote { margin-top: 8px; }
 

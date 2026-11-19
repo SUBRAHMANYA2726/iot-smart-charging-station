@@ -185,18 +185,6 @@
               <p>Actual ESP32 voltage</p>
             </article>
             <article class="metric-item">
-              <div class="metric-topline"><span class="metric-dot current-dot"></span><span>EST. CURRENT</span><span class="metric-symbol">A</span></div>
-              <div class="metric-reading"><span id="currentValue">--</span><small>A</small></div>
-              <div class="metric-track"><span id="currentBar" class="current-fill"></span></div>
-              <p>Resistance-based estimate</p>
-            </article>
-            <article class="metric-item">
-              <div class="metric-topline"><span class="metric-dot power-dot"></span><span>EST. POWER</span><span class="metric-symbol">W</span></div>
-              <div class="metric-reading"><span id="powerValue">--</span><small>W</small></div>
-              <div class="metric-track"><span id="powerBar" class="power-fill"></span></div>
-              <p>Voltage × estimated current</p>
-            </article>
-            <article class="metric-item">
               <div class="metric-topline"><span class="metric-dot load-dot"></span><span>CHARGING</span><span class="metric-symbol">↗</span></div>
               <div class="metric-reading"><span id="chargingValue">--</span></div>
               <p class="metric-footnote">Detected from measured current</p>
@@ -210,7 +198,7 @@
               <div>
               <div class="chart-kicker">LIVE CLOUD GRAPH</div>
                 <h2>Station history</h2>
-              <p>Voltage and temperature are sensor readings; current and power are estimates.</p>
+              <p>Voltage and temperature are sensor readings.</p>
               <div class="chart-storage">Firebase history <strong id="storageStatus" aria-live="polite">Checking</strong></div>
               </div>
               <div class="chart-current"><strong id="chartLatest">--</strong><small id="chartUnit">°C</small></div>
@@ -218,11 +206,9 @@
             <div class="chart-controls" role="group" aria-label="Choose chart measurement">
               <button type="button" class="chart-tab active" data-metric="temperature" aria-pressed="true">Temperature</button>
               <button type="button" class="chart-tab" data-metric="voltage" aria-pressed="false">Voltage</button>
-              <button type="button" class="chart-tab" data-metric="current" aria-pressed="false">Est. current</button>
-              <button type="button" class="chart-tab" data-metric="power" aria-pressed="false">Est. power</button>
             </div>
             <div class="chart-plot">
-              <canvas id="historyChart" role="img" aria-label="Station history graph. Current and power are estimates derived from measured voltage."></canvas>
+              <canvas id="historyChart" role="img" aria-label="Station history graph of voltage and temperature readings."></canvas>
               <div id="chartEmpty" class="chart-empty">Waiting for ThingSpeak voltage and temperature readings</div>
             </div>
             <div class="chart-axis"><span id="chartStart">--</span><span>ThingSpeak · newest on right</span><span id="chartEnd">--</span></div>
